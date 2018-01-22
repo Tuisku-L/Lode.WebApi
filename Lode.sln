@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lode.Core", "Lode.Core\Lode
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lode.Web", "Lode.Web\Lode.Web.csproj", "{EA59FB0B-B4A1-433E-8FA1-E5F1D557F00C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lode.Test", "Lode.Test\Lode.Test.csproj", "{A750E9C6-4C5E-483B-9E81-B614E5979CFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SucMailSystem", "SucMailSystem\SucMailSystem.csproj", "{9433F56E-3F55-4D17-A892-A26F24369AF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
