@@ -1,4 +1,4 @@
-##Lode
+## Lode
 A RESTful framework of ASP.Net Core.
 
 # Features
@@ -11,7 +11,7 @@ A RESTful framework of ASP.Net Core.
     - One project one plugin
         - Configure by json
 
-##How to use
+## How to use
 * Install Lode's nuget package.
 ```
 PM> Install-Package Lode
