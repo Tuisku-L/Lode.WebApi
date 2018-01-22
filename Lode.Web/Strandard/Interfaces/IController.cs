@@ -13,9 +13,12 @@
  * limitations under the License.
  */
 
+using Microsoft.AspNetCore.Http;
+
 namespace Lode.Web.Strandard.Interfaces
 {
     public interface IController
     {
+
     }
 }

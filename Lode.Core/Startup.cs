@@ -24,6 +24,8 @@ namespace Lode.Core
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -32,6 +34,8 @@ namespace Lode.Core
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSession();
 
             app.Run(async (context) =>
             {

@@ -20,9 +20,27 @@ namespace Lode.Web
 
         public static async Task OnRequest()
         {
+            var requestHandlerList = new List<Type>();
+
             var allRequestHandler = ClassUtil.FindImplementClasses(typeof(IHttpRequestHandler));
 
-            foreach (var type in allRequestHandler)
+            requestHandlerList.AddRange(allRequestHandler);
+
+            var allPlugin = PluginUtil.GetPluginFilePaths();
+
+            if (allPlugin != null)
+            {
+                foreach (var plugin in allPlugin)
+                {
+                    var plguinController = ClassUtil.FindImplementClasses(plugin, typeof(IHttpRequestHandler));
+                    if (plguinController != null && plguinController.Count > 0)
+                    {
+                        requestHandlerList.AddRange(plguinController);
+                    }
+                }
+            }
+             
+            foreach (var type in requestHandlerList)
             {
                 var handler = (IHttpRequestHandler)type.Assembly.CreateInstance(type.FullName);
                 await handler.OnRequest();

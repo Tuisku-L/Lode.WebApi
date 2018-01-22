@@ -21,21 +21,41 @@ using System.Collections.Generic;
 using System.FastReflection;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Lode.Web.Strandard.Handlers;
 
 namespace Lode.Web.Strandard.Extensions
 {
     public static class RequestExtensions
     {
-        public static T GetParm<T>(this HttpRequest request, string key, T defaultValue = default(T))
+        public static T GetParm<T>(this HttpRequest request, string key, string path, T defaultValue = default(T))
         {
-            if (request.Form.TryGetValue(key, out var formValue))
+            try
             {
-                return formValue.ConvertOrDefault(defaultValue);
+                if (request.Form.TryGetValue(key, out var formValue))
+                {
+                    return formValue.First().ConvertOrDefault(defaultValue);
+                }
+            }
+            catch
+            {
+                // ignored
             }
 
             if (request.Query.TryGetValue(key, out var queryValue))
             {
-                return queryValue.ConvertOrDefault(defaultValue);
+                return queryValue.First().ConvertOrDefault(defaultValue);
+            }
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                var urlParms = request.GetUrlParms(path, key);
+                if (urlParms != null)
+                //if (urlParms.TryGetValue(key, out var urlParmsValue))
+                {
+                    return urlParms.ConvertOrDefault(defaultValue);
+                    //return urlParmsValue.ConvertOrDefault(defaultValue);
+                }
             }
 
             var jsonValue = request.GetJsonBodyDictionary().GetOrDefault(key);
@@ -71,7 +91,7 @@ namespace Lode.Web.Strandard.Extensions
                     {
                         continue;
                     }
-                    var propertyValue = request.GetParm<object>(property.Name)
+                    var propertyValue = request.GetParm<object>(property.Name, "")
                         .ConvertOrDefault(property.PropertyType, null);
                     if (propertyValue != null)
                     {
@@ -126,7 +146,8 @@ namespace Lode.Web.Strandard.Extensions
         public static IDictionary<string, object> GetJsonBodyDictionary(this HttpRequest request)
         {
             return (IDictionary<string, object>)request.HttpContext.Items.GetOrCreate(
-                "__json_body_dictionary", () => {
+                "__json_body_dictionary", () =>
+                {
                     var jsonBody = request.GetJsonBody();
                     return string.IsNullOrEmpty(jsonBody) ?
                         new Dictionary<string, object>() :
@@ -141,6 +162,31 @@ namespace Lode.Web.Strandard.Extensions
                 return (string)request.HttpContext.Items.GetOrCreate(
                     "__json_body", () => new StreamReader(request.Body).ReadToEnd());
             }
+            return null;
+        }
+
+        public static string GetUrlParms(this HttpRequest request, string routePath, string key)
+        {
+            //var urlParms = new Dictionary<string, object>();
+
+            var urlSplit = routePath.Split("/");
+            if (!urlSplit.Select(x => x.Contains("{") && x.Contains("}")).Any()) return null;
+
+            var requestPathSplit = request.Path.HasValue ? request.Path.Value.Split("/") : null;
+
+            if (requestPathSplit == null) return null;
+
+            var parmsRegex = new Regex(@"({)(((?!\/).)*)(})");
+
+            for (var i = 0; i < urlSplit.Length; i++)
+            {
+                if (parmsRegex.IsMatch(urlSplit[i]) && urlSplit[i].Contains(key))
+                {
+                    return requestPathSplit[i];
+                    //urlParms.Add(urlSplit[i].Trim('{').Trim('}'), requestPathSplit[i]);
+                }
+            }
+
             return null;
         }
     }

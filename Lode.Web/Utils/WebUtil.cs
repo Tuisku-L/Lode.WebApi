@@ -17,6 +17,8 @@ using Lode.Web.Strandard;
 using Lode.Web.Strandard.Extensions;
 using System;
 using System.Reflection;
+using System.Text;
+using Lode.Web.Strandard.Attributes;
 
 namespace Lode.Web.Utils
 {
@@ -25,7 +27,7 @@ namespace Lode.Web.Utils
         public static T GetParameter<T>(string name, MethodInfo method, ParameterInfo parameterInfo)
         {
             var request = HttpManager.CurrentContext.Request;
-            var result = request.GetParm<T>(name);
+            var result = request.GetParm<T>(name, method.GetCustomAttribute<RouteAttribute>().Path);
             if (result != null)
             {
                 return result;
@@ -42,6 +44,19 @@ namespace Lode.Web.Utils
                 return (T)parameterInfo.DefaultValue;
             }
             return default(T);
+        }
+
+        public static void SetSession(string key, string value)
+        {
+            var session = HttpManager.CurrentContext.Session;
+            session?.Set(key, Encoding.Default.GetBytes(value));
+        }
+
+        public static string GetSession(string key)
+        {
+            var session = HttpManager.CurrentContext.Session;
+            if (session == null) return null;
+            return session.TryGetValue(key, out var value) ? Encoding.Default.GetString(value) : null;
         }
     }
 }

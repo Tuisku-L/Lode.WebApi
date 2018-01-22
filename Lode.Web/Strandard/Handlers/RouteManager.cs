@@ -19,6 +19,7 @@ using Lode.Web.Strandard.Extensions;
 using Lode.Web.Strandard.Interfaces;
 using Lode.Web.Utils;
 using System;
+using System.Collections.Generic;
 using System.FastReflection;
 using System.Reflection;
 
@@ -30,16 +31,34 @@ namespace Lode.Web.Strandard.Handlers
 
         public static void RegisterRoute()
         {
+            var controllerList = new List<Type>();
+
             var allController = ClassUtil.FindImplementClasses(typeof(IController));
 
-            foreach (var type in allController)
+            controllerList.AddRange(allController);
+
+            var allPlugin = PluginUtil.GetPluginFilePaths();
+
+            if (allPlugin != null)
+            {
+                foreach (var plugin in allPlugin)
+                {
+                    var plguinController = ClassUtil.FindImplementClasses(plugin, typeof(IController));
+                    if (plguinController != null && plguinController.Count > 0)
+                    {
+                        controllerList.AddRange(plguinController);
+                    }
+                }
+            }
+
+            foreach (var type in controllerList)
             {
                 foreach (var method in type.FastGetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
                 {
                     var routeAttribute = method.GetCustomAttribute<RouteAttribute>();
-                    if(routeAttribute == null) continue;
+                    if (routeAttribute == null) continue;
 
-                    var controller =  (IController)type.Assembly.CreateInstance(type.FullName);
+                    var controller = (IController)type.Assembly.CreateInstance(type.FullName);
                     ControllerUtil.NonGenericWrapFactory(type, () => controller, out var genericFactory,
                         out var objectFactory);
                     var factoryData = new ContainerFactoryData(

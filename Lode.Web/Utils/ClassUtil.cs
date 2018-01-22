@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Lode.Web.Utils
 {
@@ -23,8 +24,15 @@ namespace Lode.Web.Utils
     {
         public static List<Type> FindImplementClasses(Type type)
         {
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(c => c.GetTypes().Where(t => t.GetInterfaces().Contains(type))).ToList();
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(c => c.GetTypes().Where(t => t.GetInterfaces().Contains(type))).ToList();
+
+            return types;
+        }
+
+        public static List<Type> FindImplementClasses(string dllPath, Type type)
+        {
+            var assembly = Assembly.LoadFile(dllPath);
+            var types = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(type)).ToList();
 
             return types;
         }
