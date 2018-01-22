@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lode.Core", "Lode.Core\Lode.Core.csproj", "{419AE911-9378-4758-8F00-D55F9310A3F9}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lode.Web", "Lode.Web\Lode.Web.csproj", "{EA59FB0B-B4A1-433E-8FA1-E5F1D557F00C}"
 EndProject
 Global
