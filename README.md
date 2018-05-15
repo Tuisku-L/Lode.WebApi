@@ -3,7 +3,7 @@ A RESTful framework of ASP.Net Core.
 
 # Features
 * Support ASP.Net Core
-* Qucik to get started (minimal architecture)
+* Quick to get started (minimal architecture)
     - Install nuget package
     - Create controller
     - Done
