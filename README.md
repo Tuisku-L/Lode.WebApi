@@ -5,7 +5,7 @@ A RESTful framework of ASP.Net Core.
 * Support ASP.Net Core
 * Qucik to get started (minimal architecture)
     - Install nuget package
-    - Create conteoller
+    - Create controller
     - Done
 * Plugin system (plugin architecture)
     - One project one plugin
